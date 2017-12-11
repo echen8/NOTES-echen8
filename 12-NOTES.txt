@@ -123,6 +123,75 @@ AIM:
 
 ====================================================================================================================================================================================
 
+12/11/17
+
+AIM: Creating a handshake agreement
+
+DO NOW:
+	Consider a program that uses pipes in order to communicate between 2 separate executable files.
+	One file is a "server" that is always running. The other is a "client"
+	Design a process by which both files can connect to each other and verify that each can send and receive data. Try to keep it as simple as possible.
+1. Client sends pre-arranged message.
+2. Server checks message. - Server knows client can send data.
+3. Server sends back pre-arranged response.
+4. Client checks response. - Client knows server can receive and send back data.
+5. Client sends a message back verifying it received response. - Server knows client can receive data.
+
+Handshake
+- A procedure to ensure that a connection has been established between 2 programs.
+- Both ends of the connection must verify that they can send and receive data to and from each other.
+- 3 Way Handshake:
+	Client sends a message to the server.
+	Server sends a response to the client.
+	Client sends a response back to the server.
+
+Basic server/client design pattern
+ 1. Setup
+	 a. Server creates a FIFO (Well Known Pipe) and waits for a connection.
+	 b. Client creates a "private" FIFO.
+ 2. Handshake
+	 a. Client connects to server and sends the private FIFO name. Client waits for a response from the server.
+	 b. Server receives client's message and removes the Well Known Pipe (WKP).
+	 c. Server connects to client FIFO, sending an initial acknowledgement message.
+	 d. Client receives server's message, removes its private FIFO.
+	 e. Client sends response to server.
+ 3. Operation
+	Server and client send information back and forth.
+ 4. Reset
+	 a. Client exits, server closes any connections to the client.
+	 b. Server recreates the WKP and waits for another client.
+
+====================================================================================================================================================================================
+
 
 
 ====================================================================================================================================================================================
+
+
+
+====================================================================================================================================================================================
+
+
+
+====================================================================================================================================================================================
+
+
+
+====================================================================================================================================================================================
+
+
+
+====================================================================================================================================================================================
+
+
+
+====================================================================================================================================================================================
+
+
+
+
+
+
+
+
+
