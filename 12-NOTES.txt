@@ -1,0 +1,128 @@
+
+12/1/17
+
+AIM: Sharing is caring!
+
+DO NOW:
+	Write a simple C program that creates a child process.  Have the parent wait for the child to exit.
+	Create a primitive variable in the parent before forking, then modify that variable in the child.
+	Print out the variable in both the child and parent.
+
+Shared Memory - <sys/shm.h>, <sys/ipc.h>, <sys/types.h>
+- A segment of heap memory that can be accessed by multiple processes.
+- Shared memory is accessed via a key that is known by any process that needs to access it.
+- Shared memory does not get released when a program exits.
+- 5 shared memory operations:
+	Create the segment (happens only once)
+	Access the segment (happens once per process)
+	Attach the segment to a variable (once per process)
+	Detach the segment from a variable (once per process)
+	Remove the segment (happens only once)
+
+shmget()
+- Create or access a shared memory segment.
+- Returns a shared memory descriptor (similar concept to a file descriptor), or -1 if it failed (errno).
+	shmget( key, size, flags );
+	- key:	 Unique integer identifier for the shared memory segment (like a file name).
+	- size:	 How much memory to request.
+	- flags: Includes permissions for the segment, combined with bitwise OR (|).
+		NOTE: IPC = Inter-process Communication
+		IPC_CREAT:	Create the segment; if segment is new, will set all the values to 0. (Much like calloc();)
+		IPC_EXCL:	Fail if the segment already exists and IPC_CREAT is on.
+shmat()
+- Attach a shared memory segment to a variable.
+- Returns a pointer to the segment, or -1 (errno).
+	shmat( descriptor, address, flags );
+	- descriptor: The return value of shmget().
+	- address:	  If 0, the OS will provide the appropriate address.
+	- flags:	  Usually 0, there is one useful flag..
+		SHM_RDONLY: Makes the memory read only
+
+====================================================================================================================================================================================
+
+12/4/17
+
+AIM: Memes
+
+More Shared Memory Functions
+- shmdt
+	Detach a variable from a shared memory segment
+	Returns 0 upon success or -1 (errno)
+	shmdt( pointer )
+	- pointer: The address used to access the segment
+- shmctl
+	Perform operations on the shared memory segment
+	Each shared memory segment has metadata that can be stored in a struct (struct shmid_ds)
+	Some of that data stored: last access, size, pid of creator, pid of last modification
+	shmctl( descriptor, command, buffer )
+	- descriptor: Return value of shmget
+	- command: One of the following:
+		IPC_RMID: Remove a shared memory segment
+		IPC_STAT: Populate the buffer (struct shmid_ds *) with segment metadata
+		IPC_SET:  Set some of the segment metadata from buffer
+	- buffer: Can be NULL if using IPC_RMID
+
+Shell Commands
+  ipcs -m
+	Lists shared memory
+  ipcrm -m <shmid>
+	Clears the given shmid.
+
+====================================================================================================================================================================================
+
+12/5/17
+
+AIM: How do we flag down a resource?
+
+DO NOW: How would you control access to a shared resource like a file, pipe, or shared memory, such that you could ensure no read/write conflicts occurred?
+
+Semaphores (created by Edsger Dijkstra
+- IPC construct used to control access to a shared resource (like a file of shared memory).
+- Most commonly, a semaphore is used as a counter representing how many processes can access a resource at a given time.
+	If a semaphore has a value of 3, then it can have 3 active "users" at a time.
+	If a semaphore has a value of 0, then it is unavailable.
+- Most semaphore operations are "atomic", meaning they will not be split up into multiple processor instructions.
+
+Nonatomic Semaphore Operations
+* Same as shared memory operations, except replace "shm" with "sem"
+- Creating a semaphore (value is initialized at 0)
+- Setting an initial value
+- Removing a semaphore
+
+Atomic Semaphore Operations
+* Let S represent the semaphore
+- Up(S) / V(S)
+	Release the semaphore to signal you are done with its associated resource.
+	Pseudocode: "S++"
+- Down(S) / P(S)
+	Attempt to take the semaphore.
+	If the semaphore is 0, wait for it to be available.
+	Pseudocode: "while( S == 0 ) { block } S--;"
+
+Semaphores in C - <sys/types.h>, <sys/ipc.h>, <sys/sem.h>
+- semget
+	Create/Get access to a semaphore
+	This is not the same as Up(S) or Down(S), it doesn't modify the semaphore.
+	Returns a semaphore descriptor or -1 (errno)
+	semget( <KEY>, <AMOUNT>, <FLAGS> )
+	- KEY: Unique semaphore identifier (use ftok)
+	- AMOUNT: Semaphores are stored as sets of one or more.  The number of semaphores to create/get in the set.
+	- FLAGS: Includes permissions for the semaphore, combine with bitwise OR
+		IPC_CREAT
+		IPC_EXCL
+
+====================================================================================================================================================================================
+
+12/7/17
+
+====================================================================================================================================================================================
+
+12/8/17
+
+AIM:
+
+====================================================================================================================================================================================
+
+
+
+====================================================================================================================================================================================

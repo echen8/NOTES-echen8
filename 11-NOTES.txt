@@ -1,0 +1,418 @@
+
+11/1/17
+
+AIM: Where do compsci priests keep their files?		In directory!
+DO NOW:
+
+Directories
+- A *nix directory is a file containing the names of the files within the directory along with basic information, like file type.
+- Moving files into/out of a directory means changing the directory file, not actually moving any data.
+
+opendir - <dirent.h>
+- Open a directory file.
+- This will not change the current working directory (cwd), it only allows your program to read the contents of the directory file.
+	opendir( <PATH> );
+	- Returns a pointer to a directory stream (DIR *)
+
+closedir - <dirent.h>
+- Closes the directory stream and frees the pointer associated with it.
+	closedir( <DIRECTORY STREAM *> );
+
+readdir - <dirent.h>
+	readdir( <DIRECTORY STREAM *> );
+	- Returns a pointer to the next entry in a directory stream, or NULL if all entries have already been returned.
+
+struct dirent - <sys/types.h>
+- Directory struct that contains the information stored in a directory file.
+- Some of the data members:
+	d_name: name of a file
+	d_type: file type as an int
+i.e.
+	DIR * d;
+	d = opendir( "somedir" );
+
+	struct dirent * entry;
+	entry = readdir( d );
+
+	closedir( d );
+
+====================================================================================================================================================================================
+
+11/3/17
+
+AIM: Input? fgets about it!
+
+Command Line Arguments:
+	int main( int argc, char * argv[] )
+- Program name is considered the first command line argument.
+- argv[0] is always the name of the program.
+- argc: number of command line arguments.
+- argv: array of command line arguments.
+
+scanf - <stdio.h>
+	scanf( <FORMAT STRING>, <VAR 1>, <VAR 2>, ... );
+- Reads in data from stdin using the format string to determine types.
+- Puts the data in each variable.
+- Variables must be pointers.
+	i.e. int x, float f, double d;
+	     scanf( "%d %f %lf", &x, &f, &d );
+
+====================================================================================================================================================================================
+
+11/6/17
+
+AIM: Are your processes running?
+	Then you'd better go out and catch them!
+
+fgets - <stdio.h>
+- Read in from a file stream and store it in a string.
+	fgets( <DESTINATION>, <BYTES>, <FILE POINTER> );
+	fgets( s, n, f, );
+	- Reads at most n-1 characters from file stream f and stores it in s.
+	File pointer
+	- FILE * type, more complex than a file descriptor.
+	- stdin is a FILE * variable.
+- Stops at newline, end of file, or byte limit.
+- If applicable, keeps the newline character as part of the string, appends NULL after.
+	fgets( s, 256, stdin );
+	- Reads a line of text from standard in.
+
+sscanf - <stdio.h>
+- Scan a string and extract values based on a format string.
+	sscanf( <SOURCE STRING>, <FORMAT STRING>, <VAR 1>, <VAR 2>... );
+
+Processes
+- Every running program is a process.  A process can create subprocesses, but these are no different from regular processes.
+- A processor can handle 1 process per cycle (per core).
+- "Multitasking" appears to happen because the processor switches between all the active processes quickly.
+
+pid
+- Every process has a unique identifier called the pid.
+- pid 1 is the init process.  It is always running.  Shutting down pid 1 would power off your computer.
+- Each entry in the /proc directory is a current pid.
+
+getpid() returns the PID of the file.
+
+====================================================================================================================================================================================
+
+11/8/17
+
+AIM: Sending mixed signals
+
+Signals
+- Limited way of sending information to a process.
+	kill
+	- Command line utility to send a signal to a process.
+		$ kill <PID>
+		- Sends signal 15 (SIGTERM) to PID.
+		$ kill -<SIGNAL> <PID>
+		- Sends SIGNAL to PID.
+	killall [-<SIGNAL] <PROCESS>
+	- Sends SIGTERM (or SIGNAL if provided) to all processes with PROCESS as the name.
+
+Signal Handling in C Programs - <signal.h>
+
+kill
+- kill( <PID>, <SIGNAL> );
+- Returns a 0 on success, or -1 (errno) on failure.
+
+sighandler
+- To intercept signals in a C program, you must create a signal handling function.
+- Some signals (like SIGKILL) cannot be caught.
+	static void sighandler( int signo );
+	- Must be static & void, must take a single int parameter.
+	- Doesn't necessarily have to be called sighandler, param doesn't necessarily need to be signo.
+
+static: the function can only be called from within the file it is defined.
+
+signal
+- After you create the function, you attach the signals to it using the signal function:
+	signal( <SIGNAL>, sighandler );
+
+====================================================================================================================================================================================
+
+11/9/17
+
+AIM: Time to make an executive decision
+DO NOW: Computer number = x
+x%2 == 0 -> execlp
+x%2 == 1 -> execvp
+
+int execlp( const char * file, const char * arg0, const char * arg1, ... const char * argn, NULL );
+execlp: Takes a file pointer and 'n' number pointers to NULL-terminated character strings.  Constructs a pathname that identifies the new process image file.  If there is a slash character in file, it will use file as the pathname, otherwise it will search all directories passed as the environment variable PATH.  It will replace the current process image with a new process image specified by file.
+
+The exec family - <unistd.h>
+- There are a number of C functions that can be used to run other programs from within.
+- Replaces the current process with the new program.
+	i.e. execlp( "ls", "ls", "-a", 0 );
+
+====================================================================================================================================================================================
+
+11/13/17
+
+AIM: What the fork?
+
+Managing Sub-processes
+
+fork() - <unistd.h>
+- Creates a separate process based on the current one, the new process is called a child, the original is the parent.
+- The child process is a duplicate of the parent process.  All parts of the parent process are copied, including stack and heap memory, and the file table.
+- Returns 0 to the child and the child's pid to the parent or -1 (errno).
+
+====================================================================================================================================================================================
+
+11/14/17
+
+AIM: Wait for it
+
+getppid()
+- Returns parent's PID.
+
+wait - <unistd.h>
+- Stops a parent process from running until any child has provided status information to the parent via a signal. (Usually the child has exited)
+- Returns the pid of the child that existed, or -1 (errno)
+	wait( int * status )
+	- The parameter <status> is used to store information about how the process exited.
+
+====================================================================================================================================================================================
+
+11/15/17
+
+AIM: Playing favorites
+
+Thread
+- Similar to a child process
+- Does not have its own memory
+- Relies on parent instructions. Needs parent process to be running
+- This is NOT what fork() does
+
+- void pointers is a generic pointer
+- You can think of data type as number of bytes. int can be thought of as 4 bytes of data. These 4 bytes of data can hold different and significant data for each byte
+
+Ordering of bytes in a variable
+- In the examples below, there is a data type that has a certain amount of bytes. (I.e int is 4 bytes). Imagine a row of 4 bytes.
+- 1 byte is 8 bits. 8 bits has 2 possibilities (0 and 1), so each byte holds 2^8 bits of data.
+- Further data is incremented by powers of 2^8
+- endian-ness: Byte order of values
+	litle endian: least significant value would show up as first byte (1st byte is 2^8, 2nd byte is 2^16, 3rd byte is 2^8 etc)
+	big endian: most significant value would show up as first byte (1st byte is 2^32, 2nd byte is 2^16, etc)
+
+wait( int *<STATUS>) - <unistd.h>
+- STATUS: used to store info about how the process exited
+- Holds return value of child program in second byte
+- first byte has a signal
+
+====================================================================================================================================================================================
+
+11/16/17
+
+AIM: Work day
+
+====================================================================================================================================================================================
+
+11/17/17
+
+AIM: Ceci n'est pas une pipe
+
+SINGLE LINE IF STATEMENT:
+	<Condition> ? <Return this if condition is true> : <Return this if condition is false>;
+
+int a, b, c;
+is the same as
+int a;
+int b;
+int c;
+
+Pipe
+- A conduit between 2 separate processes on the same computer.
+- Pipes have 2 ends, a read end and a write end.
+- Pipes are unidirectional (a single pipe must be either read or write only in a process).
+- Pipes act just like files.
+- You can transfer any data you like through a pipe using read/write.
+- Unnamed pipes have no external identifier.
+
+pipe - <unistd.h>
+- Create an unnamed pipe.
+- Returns 0 if the pipe was created, -1 if not.
+- Opens both ends of the pipe as files.
+	pipe( int descriptors[2] )
+	[descriptors]
+	- Array that will contain the descriptors for each end of the pipe.
+
+====================================================================================================================================================================================
+
+11/20/17
+
+AIM: Assignment due to technical problems
+
+UNNAMED PIPES
+- Create 2 unnamed pipes
+- Fork off a child process.
+- Parent sends some number to child
+- Child does some operation on the number, send back to parent.
+- Parent prints that it got it.
+
+====================================================================================================================================================================================
+
+11/21/17
+
+AIM: A pipe by any other name...
+
+Named Pipes
+- Also known as FIFOs.
+- Same as unnamed pipes except FIFOs have a name that can be used to identify them via different programs.
+- Like unnamed pipes, FIFOs are unidirectional.
+
+mkfifo
+- Shell command to make a FIFO.
+$ mkfifo <name>
+- Using cat > <name> will allow you to write to it
+- Using cat <name> will allow you to read it.
+
+mkfifo - <sys/types.h> <sys/stat.h>
+- C function to create a FIFO.
+- Returns 0 on success and -1 on failure.
+- Once created, the FIFO acts like a regular file, and we can use open, read, write and close on it.
+	mkfifo( <name>, <permissions(mode)> );
+- FIFOs will block on open until both ends of the pipe have a connection.
+
+====================================================================================================================================================================================
+
+11/27/17
+
+AIM: Redirection; how does it... SQUIRREL
+
+File Redirection
+- Changing the usual input/output behavior of a program.
+
+  Command Line Redirection
+
+	>
+	  Redirects stdout to a file.
+	  Overwrites the contents of the file.
+	  <COMMAND> > <FILE>
+		i.e. ls > file_list
+	>>
+	  Redirects stdout to a file by appending.
+	2>
+	  Redirects stderr to a file.
+	  Overwrites the file (2>> appends).
+	&>
+	  Redirect stdout and stderr.
+	<
+	  Redirects stdin from a file.
+	  Read from a file instead of stdin.
+	| (pipe)
+	  Redirect stdout from one command to stdin of the next.
+		i.e. ls | wc
+
+  Redirection In C Programs
+
+	dup - <unistd.h>
+	- Duplicates an existing entry in the file table.
+	- Returns a new file descriptor for the duplicate entry.
+		dup( fd );
+		- Returns the new file descriptor.
+
+	dup2 - <unistd.h>
+		dup2( fd1, fd2 );
+		- Redirects fd2 to fd1.
+	- Duplicates the behavior for fd1 at fd2.
+	- You will lose any reference to the original fd2, that file will be closed.
+
+
+Use of dup & dup2 together
+FILE TABLE:
+0: stdin
+1: stdout
+2: stderr
+3: file.txt
+
+int x = dup( 1 ); // This will give x the file descriptor of stdout.  This allows a backup descriptor for stdout if it gets overwritten by dup2.
+dup2( 3, 1 ); // Overwrites fd#1 with fd#1. (Replaces stdout with file.txt)
+dup2( x, 1 ); // Overwrites file.txt at fd#1 with stdout.
+close( x ); Closes the placeholder file descriptor.
+
+
+Running $ cat without a file name will write everything into stdin.
+This will print each line typed back out into the terminal.
+
+====================================================================================================================================================================================
+
+11/28/17
+
+AIM: C, the ultimate hipster, using # decades before it was cool.
+
+#
+- Used to provide preprocessor instructions.
+- These directives are handled by gcc first.
+	#include <LIBRARY> | "<LIBRARY>"
+	  link libraries to your code
+	  when you use include, the compiler finds the file and replaces include with what is inside (i.e. replace the include with all of the headers inside a header file)
+	#define <NAME> <VALUE>
+	  replace all occurences of NAME with VALUE
+		#define TRUE 1
+	  For example, for the pipe assignment you could put the following in a header file and include it in the actual file:
+		#define READ 0
+		#define WRITE 1
+
+macros:
+#define SQUARE(x) x * x
+- SQUARE(x) is the NAME, x * x is the VALUE ...
+	int y = SQUARE(9); ==> int y = 9 * 9;
+- #define MINE(x,y) x < y ? x : y
+
+conditional statement: Useful when using header files and there are multiple functions with the same name.
+	#ifndef <IDENTIFIER> //if not defined
+	#define <IDENTIFIER>
+	<CODE>
+	#endif
+	- If the identifier has been defined, ignore all the code up until the endif statement.
+
+For example:
+	#ifndef PARSE_H // parse.h would break
+	#define PARSE_H
+	int count_tokens ...
+	...
+	#endif
+
+====================================================================================================================================================================================
+
+11/29/17
+
+Project Work Day
+
+====================================================================================================================================================================================
+
+====================================================================================================================================================================================
+
+====================================================================================================================================================================================
+
+====================================================================================================================================================================================
+
+====================================================================================================================================================================================
+
+====================================================================================================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

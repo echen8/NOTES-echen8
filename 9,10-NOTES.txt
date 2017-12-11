@@ -1,0 +1,714 @@
+SYSTEMS NOTES FOR SEPT, OCT
+
+9/11/17
+
+Basic C Setup
+	Source Code
+		Put in .c files
+		Naming convention: snake_case
+Compiling
+- gcc: GNU C Compiler
+	> Compiles to architecture specific (OS + Processor) executable files
+	> Default name of compiled file is a.out -> a.out is natively executable
+- Use gcc [filename] to compile to a.out
+- You can do gcc -o [desired compiled file name] [file to compile]
+	> i.e. gcc -o hi hello.c will compile to an executable file named “hi”
+- To run, do ./[filename]
+
+====================================================================================================================================================================================
+
+9/12/17
+
+= C =
+- Developed in the early 70s by Dennis Ritchie while working on UNIX.
+- In 1978, Ritchie and Brian Kernighan published “The C Programming Language”, providing the basis for the language.
+- Designed to match closely with machine level (assembly code) instructions, making the resulting programs lean and fast.
+- Procedural language (importantly NOT Object Oriented Programming [OOP]).
+- Syntax was used as the basis for Java syntax.
+
+====================================================================================================================================================================================
+
+9/13/17
+
+AIM: Variables are the spice of life
+DO NOW: Run $ man stdio from the terminal.  What did you learn?
+Stdio = standard input/output library functions
+
+Including libraries
+- To use functions defined in other files, 2 things happen:
+	1. Check that you are using the function correctly, that the arguments and return type match the function definition.
+	2. Link the code for the external function to your executable code.  gcc can automatically link functions in standard libraries.
+- The executable only contains code for used functions from included libraries. (In contract, Java import imports EVERYTHING from the library.)
+
+#include
+- Used to include function headers with your code.
+- Necessary to match arguments and return types (step 1)
+- Not necessary for linking (step 2)
+- Put system libraries inside ‘< >’
+	i.e. #include <stdio.h>
+
+====================================================================================================================================================================================
+
+9/14/17
+
+AIM: Always read the fine print
+DO NOW: List the primitive data types in Java
+int, float, boolean, double, short, long, char, byte
+
+NO BOOLEAN AND BYTE TYPES IN C!
+
+C Primitive Variable Types
+- All C primitives are numeric.
+- The only differences are: floating point vs integer; size of variable in memory.
+- Size can be platform dependent
+	> sizeof( <TYPE> ) can be used to find the size in bytes.
+	i.e. sizeof( int )
+
+TYPE	STANDARD SIZE IN BYTES				RANGE
+char		1				-128 to 127
+int		4				-2,147,483,648 to 2,147,483,647
+short		2				-32,768 to 32,767
+long		8				-(2^63) to (2^63 + 1)
+float		4				7 digit precision
+double		8				14 digit precision
+
+printf - stdio.h
+- The most important C function!
+- Prints formatted strings
+- printf( <string literal>, <var1>, <var2> ... )
+- Simple printf does not need the <var> arguments
+	i.e. printf( “hola” )
+- printf does not add a newline at the end!
+- If you want to print variables, you must include formatting placeholders in the string argument.
+	i.e.
+		int i = 5;
+		printf( “i is %d”, i )
+
+TYPE	FORMATTING CHARACTER
+int		%d
+long		%ld
+float		%f
+double		%lf
+		%0.<x>f will provide x digits after the floating point
+char		%c
+char array	%s
+pointer		%p
+
+Try:
+	Declare and initialize an int, float, and char.
+
+	Print out the values of those variables correctly.
+
+	Try printing out the values using the incorrect formatting characters.
+
+====================================================================================================================================================================================
+
+9/18/17
+
+AIM: A vast array of possibilities
+DO NOW: Turn to your neighbors and discuss the things that came up while you were working on the Euler assignment.  What did you find surprising or confusing, helpful or harmful?
+
+Data Types and Variables
+- Character literals are single characters inside ‘’
+	i.e. ‘a’, ‘*’, ...
+- String literals exist, even though there is no String data type.
+	i.e. “hello”, “you smell”
+- The order that identifiers are declared in matters.
+	> This includes functions, so they must be declared before use.
+- Variables cannot be declared inside for loop statements but they can be initialized.
+- Any variable type can be declared an “unsigned” variable.  This signifies the variable will never be negative.
+	> The lower bound of any unsigned variable is 0.
+	> The upper bound will be greater than the signed version.
+	i.e. unsigned char x; // 0 <= x <= 255
+- All boolean values are numbers.
+	> 0 is false
+	> any other number is true.
+	> You will ALL make this mistake:
+		if ( x = 6 ) {...}
+	> It should be x == 6
+
+Memory Management
+- Memory allocation either happens at compile time or at run time (dynamic).
+- Compiler Allocated Memory
+	> Packaged with the binary of the program.
+	> There is no standard default value.
+	> Variables and arrays are allocated here:
+		i.e. float a
+		     int b[5]
+- Arrays
+	> Must have a fixed size set at declaration as a literal.
+	> There is no length function.
+	> There is no boundary checking.
+
+====================================================================================================================================================================================
+
+9/19/17
+
+AIM: What's the point of it all?
+
+====================================================================================================================================================================================
+
+9/20/17
+
+AIM: Try not to hurt yourself, the point is sharp.
+
+Pointers - Now the fun really starts
+- Variables designed to store memory addresses.
+- '*' is used to declare a variable as a pointer type.
+	i.e. int *p, double *q, char *r ...
+- '&' is used to get the address of a variable.
+- '*' is also used as the de-reference operator.
+	> It accesses the value at the memory location stored in a pointer.
+	i.e. *ip = 54 will set whatever ip points to to 54.
+- All pointer variable types are the same size.
+- Pointer Arithmetic
+	> int *p = &i;
+	> char *c = &i;
+		p++; // will add 4 to p.
+		c++; // will add 1 to p.
+
+- sizeof() is %lu
+- pointers are %p
+
+====================================================================================================================================================================================
+
+9/25/17
+
+AIM: How to write functioning code
+DO NOW: Write a C program with a simple function.  Call it in main.
+
+Arrays and Pointers
+- Array variables are immutable pointers.
+- Pointers can be assigned to array variables.
+	int ray[5];
+	int *rp = ray;
+	ray[3] <==> ?
+		    *(rp + 3)
+	3[ray] <==> ?
+		    *(3 + rp)
+
+Writing Functions
+- Function headers
+	< return types> <name> (<parameters)
+- All functions are "pass by value"
+	> Function arguments are new variables that contain a copy of the data passed to them.
+
+====================================================================================================================================================================================
+
+9/26/17
+
+AIM: Let's head to function town.
+DO NOW: Open your code for the previous homework assignment.
+
+You must declare a function before you use it.  This can be done in a few ways:
+	1. Write the entire function at the top of your code, making sure to keep the order correct.
+	2. Write the function headers at the top of your code, and then provide the full definition later.
+	3. Put all the functions headers in a separate file (ending in .h).  Then include that file in your .c file and provide the definitions there.
+
+====================================================================================================================================================================================
+
+9/27/17
+
+AIM: ctrings
+DO NOW: Try the following code in a C program:
+
+char *s = "hello";
+char s1[] = "hello";
+printf( "s points to: %p\n", s);
+printf( "s1 points to: %p\n", s1);
+printf( "address of \"hello\": %p\n", &"hello");
+
+OBSERVATION: The address of "hello" is the same as that of pointer s.
+
+Strings
+- Strings are character arrays
+- By convention, strings end with a null character (either '' or 0 or '\0').
+- When you make a literal string using "", an immutable string is created in memory.  These strings are automatically null terminated.
+
+Declaring Strings
+  char s[256];
+	> Normal array declaration, allocates 256 bytes.
+
+  char s1[256] = "Imagine";
+	> Allocates 256 bytes.
+	> Creates the immutable string "Imagine" and then copies it (including the terminating null) into the array.
+
+  char s2[] = "Tuesday";
+	> Allocates 8 bytes.
+	> Creates the immutable string "Tuesday" and then copies it (including the terminating null) into the array.
+
+====================================================================================================================================================================================
+
+9/28/17
+
+AIM: A string of functions.
+DO NOW: Write a function that returns the length of a string, assuming it is null terminated.
+		See .c file for answer
+
+Continuation of Yesterday's Notes:
+
+char *s3 = "Mankind";
+- Creates the immutable string "Mankind", and returns a pointer to that string.
+- Since the pointer is to an immutable piece of memory, you cannot modify strings created in this way.
+
+You can only assign char arrays with '=' at declaration.
+	char s[] = "zero";	// ok
+	s = "seven";		// not ok b/c you cannot change what an array pointer points to.
+
+Char pointers can be assigned using '=' at any time.
+	char * s = "zero";	// ok
+	s = "seven";		// ok b/c you can change what a regular pointer points to.
+
+* Strings are char arrays, which are pointers to a memory address, hence the reason why '&' is unnecessary.
+
+HW#4:
+
+0: strcpy/strncpy
+1: strcat/strncat
+2: strcmp/strncmp
+3: strchr/strstr
+
+Figure out what the function does, then write a small program to demonstrate it.
+
+====================================================================================================================================================================================
+
+10/3/17
+
+AIM: Make it so
+DO NOW: 
+
+Separate Compilation
+- You can combine multiple C files into a C program by including them all in one gcc command.
+	i.e. gcc test.c string.c foo.c woohoo.c
+- One and only one of these files must have a main function.
+- You cannot have duplicate functions or global variable names across these files.
+
+gcc -c
+- Compiles a C file into a .o file, it is not a fully functional program, but it is compiled code.  Do this to compile a .c file that does not contain a main() function.
+- .o files can be liked together with .c files through gcc.
+
+Make
+- Create compiling instructions and setup dependencies.
+- Standard name for the file is makefile.
+- Syntax:
+	<TARGET>: <DEPENDENCIES>
+	[TAB]<RULES>
+- <TARGET> can be either a file or just a name.
+————————————
+i.e.
+————————————
+strtest: dwstring.o main.o
+	gcc -o strtest dwstring.o main.o
+
+dwstring.o: dwstring.c dwstring.h
+	gcc -c dwstring.c
+
+main.o: main.c dwstring.h
+	gcc -c main.c
+
+clean:
+	rm *.o
+	rm *~
+
+run: all
+	./strtest
+————————————
+- In order to run a makefile, the syntax is: make <TARGET>
+	It will only make that specific target.
+	If <TARGET> is left blank, it will make the first target and all its dependencies only.
+- The clean target will run using $ make clean
+- The run target will compile all its dependencies and run automatically with $ make run
+
+====================================================================================================================================================================================
+
+10/5/17
+
+====================================================================================================================================================================================
+
+10/6/17
+
+AIM: Finding your type
+
+Typedef
+- Provides a new name for an existing data type.
+- One of the religious wars of programming (tabs vs. spaces, emacs vs. vim)
+
+Struct
+- Create a new type that is a collection of values
+- struct { int a; char x; } s;
+	> s is a variable of that struct type.
+
+====================================================================================================================================================================================
+
+10/10/17
+
+AIM: If you don't pay attention you'll get into a heap of trouble!
+
+Struct
+- struct { int a; char x; } s;
+- We use the . operator to access a value inside a struct
+	s.a = 10;
+	s.x = '@';
+- . binds before *
+	struct foo *p;
+	p = &s;
+	(*p).x;
+	NOT *p.x
+- To access data from a struct pointer you can also use ->
+	p -> x; // same as (*p).x;
+- You can typedef structs, …
+
+Stack Memory vs Heap Memory
+- Computer programs separate memory usage into two parts: stack and heap
+- Every program can have its own stack and heap
+- Stack memory:
+	> Stores all normally declared variables ( including pointers and structs ), arrays and function calls.
+	> Functions are pushed onto the stack in the order they are called, and popped off when completed.
+	> When a function is popped off the stack, the stack memory associated with it is released.  You can't use that memory later because it's gone -The stack contains all the memory we learned so far in C, including arguments to functions. The copy of the argument(s) associated with that function is put onto the stack.
+
+====================================================================================================================================================================================
+
+10/11/17
+
+AIM: Cont.
+
+Example:
+	struct node{
+		int data;
+		struct node *next;
+	}
+
+	struct node *insert_front(struct node *front, int d){
+		struct node new;
+		new.data = d;
+		new.next = front;
+		return &new;
+	}
+- On the above example, this looks good on paper. This should implement a linked list data - structure
+- However, this is BAD. The struct node new would cease to exist because it's stack memory
+- Declaring a variable in a function puts it into the stack and it subsequently gets popped off
+
+Heap Memory:
+- Stores dynamically allocated memory
+- IMPORTANT DIFFERENCE FROM STACK MEMORY: data will remain in the heap until it is released manually by you or when the program terminates
+- Can be accessed through pointers
+- Can be accessed across many functions
+- Persists throughout the duration of the program's execution, until it terminates of course
+- A memory leak occurs when a program uses lots of heap memory
+
+====================================================================================================================================================================================
+
+10/12/17
+
+AIM: malloc & free: The dynamic duo!
+DO NOW: In a moment, you'll be given a pair of functions to investigate.
+	Figure out what they do, and write a small program to demonstrate them.
+
+0: malloc, free
+1: calloc, realloc
+
+Dynamic Memory Allocation
+—————————————————————————
+malloc( size_t x );
+- Allocates x bytes of memory (from the heap);
+- Returns the address at the beginning of the allocation.
+- Returns a void *, always typecast to the correct pointer type.
+	int *p;
+	p = (int *) malloc( 5 * sizeof( int ) );
+free
+- Releases dynamically allocated memory.
+- Takes one parameter, a pointer to the beginning of a dynamically allocated block of memory.
+- Every call to malloc/calloc should have a corresponding call to free.
+	int * p;
+	p = (int *)malloc( 20 );
+	free(p);
+
+====================================================================================================================================================================================
+
+10/13/17
+
+AIM: Cont.
+
+calloc( size_t n, size_t x );
+- Allocates n * x bytes of memory.
+- Ensures that each bit is set to 0.
+- Works like malloc in all other ways.
+	int * p;
+	p = (int *)calloc( 5, sizeof(int) );
+realloc( void * p, size_t x );
+- Changes the amount of memory allocated to a given block.
+- p must be a pointer to the beginning of an allocated block of memory, but it does not have to be the original pointer.
+- If x is smaller than the original size of the allocation, the extra bytes will be released.
+	int * p;
+	p = (int *)malloc( 20 );
+	p = (int *)realloc( p, 40 );
+
+====================================================================================================================================================================================
+
+10/16/17
+
+AIM:
+DO NOW:
+
+PROJECT ANNOUNCEMENT
+
+
+====================================================================================================================================================================================
+
+10/18/17
+
+AIM: Back to the grind
+DO NOW: 
+
+Valgrind
+- Tool for debugging memory issues in C programs.
+- You must compile with -g in order to use valgrind (and similar tools)
+	gcc -g foo.c
+- Usage:
+	$ valgrind --leak-check=yes <program>
+
+====================================================================================================================================================================================
+
+10/19/17
+
+AIM: Get Dem Bugs
+DO NOW:
+
+GDB
+
+- Commands from the gdb shell:
+	run: runs the program until it ends/crashes.
+	list: show the lines of code run around a crash.
+	print <VAR>: print a variable.
+	backtrace: show the current stack.
+	break <line number>: creates a breakpoint at the given line.
+- Running a program in pieces:
+	continue: run the program until the next breakpoint.
+	next: run the next line of the program only.
+	step: run the next line of the program, is that is a function call, run only the next line of that function.
+
+====================================================================================================================================================================================
+
+10/23/17
+
+AIM: A bit of wisdom
+DO NOW: "%o" and "%x" are printf formatting characters that work on integer types.  Test them out in a small program.  What do they do?
+
+Binary, octal, and hexadecimal integers
+- Other base formatting characters:
+	%d: decimal integer
+	%o: octal integer
+	%x: hexadecimal integer
+- You can define native integers in bases 2, 8, and 16 by using the following prefixes.
+	0b: binary (2)
+	0 : octal (8)
+	0x: hexadecimal (16)
+- This doesn't change the value.
+	0b1011 == 013 == 0xB == 11
+
+Bitwise Operators -- Only Binary!
+- Evaluated on each individual bit of a value.
+ >> 
+	Right shift - moves all bits to the right, adds 0s to the front.
+	i.e. x = x >> 1;
+	Basically divides by 2 and floors for each space you shift.
+ <<
+	Left shift - moves all bits to the left, adds 0s to the end.
+	i.e. x = x << 1;
+	Basically multiplies by 2 for each space you shift.
+- Left shift and right shift will not overflow end bits into adjacent memory.
+ ~
+	Negation - flips every bit.
+	i.e. ~x
+ |
+	Or - perform or for each pair of bits in (a,b)
+	i.e. a | b
+	 10110111
+	|01011100
+	---------
+	 11111111
+ &
+	And - perform and for each pair of bits in (a,b)
+	i.e. a & b
+	 10110111
+	&01011100
+	---------
+	 00010100
+ ^
+	Xor - perform xor (exclusive or) for each pair of bits in (a,b)
+	i.e. a ^ b
+	 10110111
+	^01011100
+	---------
+	 11101011
+
+xor swap:
+1. a = a ^ b;
+2. b = a ^ b;
+3. a = a ^ b;
+
+====================================================================================================================================================================================
+
+10/24/17
+
+AIM:
+DO NOW:
+
+Three Kinds of File Permissions
+- Read [r]: File is readable
+- Write [w]: File is writeable
+- Executable [x]: File is executable
+- These three permissions can be represented as 3-digit binary numbers or 1-digit octals (0b denotes binary 0 denotes octal)
+	0b100 <==> 04 => Read-Only
+	0b111 <==> 07 => Read, Write, Execute
+	0b101 <==> 05 => Read, Execute
+
+Three Permission 'Areas'
+- There are three permission "areas"
+	User, Group, Others
+- Others does NOT refer to everyone, it refers to everyone besides User and Group
+- Each area can have its own permissions
+	i.e. 0644 <=> 101100100 => User can read/write, group can only read, others can only read.
+
+Viewing and Changing Permissions
+- Permissions can be viewed by using the ls -l command
+- Permissions can be changed with the chmod command
+	i.e. chmod 664 broken.c sets the permissions of broken.c to 664
+- This is a more useful alternative to the chmod + command we were used to using
+- The Owner can always change the permissions of a file
+
+Metadata
+- The Metadata of a file stores information about the file
+- This information can include things like file size, and permissions
+
+====================================================================================================================================================================================
+
+10/25/17
+
+AIM: Opening up a world of possibilities
+DO NOW: In your table pairs, look at your computer number and mod it by 2.  Then look up the following functions and describe them to your table buddy:
+0) open/close
+1) read/write
+
+The file table has a limited size, which is a power of 2 and commonly 256.  getdtablesize() will return this value.
+
+Each file is given an integer index, starting at 0, this is referred to as the file descriptor.
+
+There are 3 files always open in the table:
+0 or STDIN_FILENO: stdin
+1 or STDOUT_FILENO: stdout
+2 of STDERR_FILENO: stderr
+
+open - <fcntl.h>
+- Add a file to the file table and returns its file descriptor.
+- If open fails, -1 is returned, extra error information can be found in errno.
+	errno is an int variable that can be found in <errno.h>, using strerror (in string.h) on errno will return a string description of the error.
+- open( <PATH>, <FLAGS>, <MODE> )
+
+mode
+- Only used when creating a file. Set the new file's permissions using a 3 digit octal number.
+
+flags
+- Determine what you plan to do with the file.
+- Use the following constants:
+	O_RDONLY
+	O_WRONLY
+	O_RDWR
+	O_APPEND
+	O_TRUNC
+	O_CREAT
+	O_EXCL: when combined with O_CREAT, will return an error if the file exists.
+- Each flag is a number, to combine flags we use bitwise OR
+
+	O_WRONLY = 1	00000001
+	O_APPEND = 8	00001000
+	O_WRONLY | O_APPEND = 00001001
+
+====================================================================================================================================================================================
+
+10/26/17
+
+AIM: Read your writes!
+DO NOW: Write a C program that creates a new file.  Give the file read & write permissions to each permission area.
+	Run ls -l to check the permissions.
+
+umask - <sys/stat.h>
+- Set the file creation permission mask.
+- By default, created files are not given the exact permissions provided in the mode argument to open.  Some permissions are automatically shut off.
+- Umask is applied the following way:
+	new_permissions = ~mask & mode
+- The default mask is 0002.
+
+umask( <MASK> );
+- You can define the mask using a 3 digit octal number.
+	umask( 0000 );
+
+read - <unistd.h>
+- Read in data from a file
+	read( <FILE DESCRIPTOR>, <BUFFER>, <AMOUNT> );
+	read( fd, buff, n );
+- Read n bytes from the fd's file and put that data into buff.
+- Returns the number of bytes actually read.  Returns -1 and sets errno if unsuccessful.
+- BUFFER must be a pointer.
+
+write - <unistd.h>
+- Write data to a file.
+	write( <FILE DESCRIPTOR>, <BUFFER>, <AMOUNT> );
+	write( fd, buff, n );
+- Write n bytes from buff into fd's file.
+- Returns the number of bytes actually written.  Return -1 and sets errno if unsuccessful.
+- BUFFER must be a pointer.
+
+====================================================================================================================================================================================
+
+10/30/17
+
+lseek - <unistd.h>
+- Set the current position in an open file.
+
+    lseek( <FILE DESCRIPTOR>, <OFFSET>, <WHENCE> );
+	<OFFSET>
+	    - The number of bytes to move the position by.
+	    - Can be negative.
+	<WHENCE>
+	    - Where to measure the offset from.
+		SEEK_SET
+		    offset is evaluated from the beginning of the file.
+		SEEK_CUR
+		    offset is relative to the current position in the file.
+		SEEK_END
+		    offset is evaluated from the end of the file.
+
+- Returns the number of bytes the current position is from the beginning of the file, or -1 (errno)
+
+stat - <sys/stat.h>
+- Get information about a file (metadata).
+
+    stat( <PATH>, <STAT BUFFER> );
+
+	struct stat sb;
+	stat( "foo", &sb );
+
+	STAT BUFFER
+	    - Must be a pointer to a struct stat.
+	    - All the file information gets put into the stat buffer.
+	    - Some of the fields in struct stat:
+		st_size
+		    - File size in bytes
+		st_uid, st_gid
+		    - User ID, Group ID
+		st_mode
+		    - File permissions
+		st_atime, st_mtime
+		    - Last access, Last modification
+		- These are time_t variables.  We can use functions in time.h to make sense of them.
+		    ctime( <TIME> )
+			- TIME is type time_t.
+			- Returns the time as a string.
+
+====================================================================================================================================================================================
+
+
+
+
+End File
