@@ -156,7 +156,7 @@ Basic server/client design pattern
 	 d. Client receives server's message, removes its private FIFO.
 	 e. Client sends response to server.
  3. Operation
-	Server and client send information back and forth.
+	  Server and client send information back and forth.
  4. Reset
 	 a. Client exits, server closes any connections to the client.
 	 b. Server recreates the WKP and waits for another client.
@@ -171,6 +171,20 @@ DO NOW:
 
 ====================================================================================================================================================================================
 
+12/18/17
+
+AIM: Always tip your servers
+
+Forking server/client 'handshake' design pattern
+ 2. Handshake
+	 a. Client connects to server and sends the private FIFO name. Client waits for a response from the server.
+	 b. Server receives client's message and forks off a sub-server.
+	 c. Sub-server connects to client FIFO, sending an initial acknowledgement message.
+	 d. Client receives sub-server's message, removes its private FIFO.
+ 3. Operation
+	  Server removes WKP and closes any connections to client.
+	  Server recreates WKP and waits for a new connection.
+	  Sub-server and client send information back and forth.
 
 
 ====================================================================================================================================================================================
