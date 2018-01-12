@@ -166,26 +166,63 @@ The Link Layer
 	> How to transmit bits between two computers
 	> Electrons, photons, radio waves...
 - A brief history of physical connections:
-	> Thicknet
-		A single coaxial cable runs along the network.
-		"Vampire taps" cut into the cable and connect to a computer.
-	> Thinnet
-		A thinner, single coaxial cable runs along the network.
-		T-Connectors connect computers to the main cable.
-	Both of these require use of a repeater, as the more computers there are connected, the weaker the signal gets.
-	> Token Ring
-		Each computer is connected in a ring to each other.
-		Only one computer has command of network resources at a time.  This is called "having the token".
-		The network sends a "token" throughout the ring, which contains the identity of the computer allowed to use the network.  All other computers must wait to use the network.
-	> Ethernet
-		Multiple computers connect to a single hub or switch.
-		Hub: Broadcasts the data to all the computers.
-		Switch: Sends data to a specific computer.
-
-
+	Thicknet
+	- A single coaxial cable runs along the network.
+	- "Vampire taps" cut into the cable and connect to a computer.
+	Thinnet
+	- A thinner, single coaxial cable runs along the network.
+	- T-Connectors connect computers to the main cable.
+	> Both of these require use of a repeater, as the more computers there are connected, the weaker the signal gets.
+	Token Ring
+	- Each computer is connected in a ring to each other.
+	- Only one computer has command of network resources at a time.  This is called "having the token".
+	- The network sends a "token" throughout the ring, which contains the identity of the computer allowed to use the network.  All other computers must wait to use the network.
+	Ethernet
+	- Multiple computers connect to a single hub or switch.
+	- Hub: Broadcasts the data to all the computers.
+	- Switch: Sends data to a specific computer.
 
 ====================================================================================================================================================================================
 
+1/12/18
+
+AIM: Cisco in an hour 2: Electric Boogaloo
+
+Link Layer
+- In order for data to be sent between computers:
+	Each computer needs a unique address (MAC Address)
+	The data needs to be sent in a standardized format (Frames)
+
+MAC Address (Media Access Control Address)
+- 6-byte hex address
+	i.e. 2a:00:1e:b9:70:f6
+- MAC addresses only need to be unique on the same local network.
+
+Ethernet Frames
+- Each frame has the following format:
+	8B 6B 6B 2B _B 4B
+		8 Bytes -> prefix: 10101010 x 7 + 10101011
+		6 Bytes -> destination: MAC Address
+		6 Bytes -> source: MAC Address
+		2 Bytes -> type: Some ethernet frame data
+		_ Bytes -> data: MTU (Maximum Transmission Unit) of 1500B - larger data will be packaged.
+		4 Bytes -> checksum: ensures data integrity
+
+Internet Layer
+- Transmission of data between two separate networks.
+- Major features of this layer are addressing and routing.
+- Routers are physical devices used to connect different local networks.
+- Internet layer traffic ignores the specifics of link layer traffic.
+
+IP Packets
+- Data sent over the internet layer is formatted into IP packets.
+	IPv4 Packet Header: 2B 2B 4B 1B 1B 2B -> type | size | fragment info | ttl | protocol | header checksum
+		type: IPv4/v6, length of header
+		size: total size of the packet
+		fragment info: full payloads may be broken into multiple fragments.  Each packet will count the number of fragments and its individual fragment number
+		ttl (time to live): maximum number of hops a packet can make before reaching its destination
+		protocol: TCP/UDP...
+		header checksum: only a checksum of the header, not the full packet
 
 
 ====================================================================================================================================================================================
