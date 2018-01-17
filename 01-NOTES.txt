@@ -224,14 +224,36 @@ IP Packets
 		protocol: TCP/UDP...
 		header checksum: only a checksum of the header, not the full packet
 
+====================================================================================================================================================================================
+
+1/16/18
 
 ====================================================================================================================================================================================
 
+1/17/18
 
+AIM: Cisco in an hour IV: A New Hope
 
-====================================================================================================================================================================================
+Transport Layer
+- Computer to computer connection over a network.
+- Unconcerned with the individual hops of layer 3 traffic.
+- Network ports are used at the transport layer.
+- TCP and UDP are transport layer protocols.
 
+Application Layer
+- Everything else...
 
+Data Encapsulation
+- As data crosses from an upper layer to a lower one, layer-specific metadata is added to aid transmission.
+	Application -> Transport
+	- UDP or TCP headers are added, including network port information.
+	Transport -> Network
+	- Data (including Transport headers) is packaged into IP Packets.
+	Network -> Link
+	- Packets (including IP and Transport headers) are packaged into Ethernet Frames.
+
+Data Decapsulation
+- When data crosses back up a layer, the packaging for the lower layer is removed.
 
 ====================================================================================================================================================================================
 
